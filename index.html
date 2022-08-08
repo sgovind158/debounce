@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Movie Name</title>
+    <style>
+        body{
+            margin: 0%;
+            padding: 0%;
+            box-sizing: border-box;
+        }
+        #bigBox{
+            width: 40%;
+            height: 300px;
+            border: 1px solid black;
+            margin: auto;
+            margin-top: 20px;
+           background-color: lightblue;
+        }
+        #query{
+            width: 70%;
+            height: 40px;
+            border-radius: 10px;
+            display: block;
+            margin: auto;
+            border: 2px solid teal;
+            margin-top: 20px;
+            font-size: 25px;
+        }
+        #movies{
+            width: 70%;
+            height: 75%;
+            border: 1px solid teal;
+            margin: auto;
+            overflow: scroll;
+            background-color: lightpink;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div id="bigBox">
+        <input type="text" oninput="debounceFun(main,1000)" placeholder="enter movie name" id="query">
+        <div id="movies">
+          
+
+        </div>
+    </div>
+</body>
+</html>
+<script>
+
+// 
+
+
+  
+    let  id;
+    let movieDiv = document.querySelector("#movies")
+
+
+
+    /// debounce function here 
+    /// note a -> debounce -> main('a')-.>
+//av - > debounce -> main("av")--> id of main("a")--clearTimeout(id)
+//avn - > debounce -> main("avn")--> id of main("av")--clearTimeout(id)
+      function debounceFun(main,delay){
+
+        if(id){
+            id = clearTimeout(id)
+        }
+
+        id = setTimeout(()=>{
+            main()
+        },delay)
+
+     }
+
+     // main function  here using async  function its return promise
+     async function main(){
+        let data = await searhMovieFun()
+      
+        if(data == undefined){
+            return false
+        }
+        
+        appendMovieFun(data)
+     }
+
+
+     // searhMovieFun  here using async  function its return promise
+
+     async function searhMovieFun(){
+        // https://www.omdbapi.com/?apikey=c1effb57&s=${query}  
+        let query = document.querySelector("#query").value ;
+
+        try{
+
+            let res = await fetch(`https://www.omdbapi.com/?apikey=c1effb57&s=${query} `)
+           
+             let data = await res.json()
+            return data.Search
+
+        }
+        catch(err){
+            console.log(err)
+        }
+  
+
+
+     }
+
+
+     // append function here
+     function  appendMovieFun(data){
+
+        movieDiv.innerHTML = null
+       data.map(({Title})=>{
+
+      let p = document.createElement("p")
+         p.innerHTML = Title
+         movieDiv.append(p)
+       })
+     }
+
+
+
+
+
+     
+
+
+</script>
